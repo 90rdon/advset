@@ -26,40 +26,46 @@
             <hr />
         </div>
     </div>
-    <div class="container">
+    <div class="container col-md-8">
         <form id="form1" runat="server">
-            <div id="InvestorDetails">
+            <ul id="mytab" class="nav nav-tabs">
+                <li><a href="#InvestorDetails" data-toggle="tab">Select Investor</a></li>
+                <li><a href="#documents" data-toggle="tab">Select Document</a></li>
+                <li><a href="#note" data-toggle="tab">Add Note</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="InvestorDetails" class="tab-pane fade in active">
 
-                <asp:GridView ID="GridViewInvestors" runat="server" CssClass="table table-striped" DataKeyNames="accountid" AutoGenerateColumns="False" OnRowCreated="GridViewInvestors_RowCreated" Width="550px">
-                    <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:CheckBox ID="SelectColumn" runat="server" width="50px"/>
-                            </ItemTemplate>
+                    <asp:GridView ID="GridViewInvestors" runat="server" CssClass="table table-striped" DataKeyNames="accountid" AutoGenerateColumns="False" OnRowCreated="GridViewInvestors_RowCreated" Width="550px">
+                        <Columns>
+                            <asp:TemplateField>
+                                <ItemTemplate>
+                                    <asp:CheckBox ID="SelectColumn" runat="server" width="50px"/>
+                                </ItemTemplate>
 
-                        </asp:TemplateField>
+                            </asp:TemplateField>
                   
-                        <asp:BoundField DataField="name" HeaderText="Investor Name" />
-                        <asp:BoundField DataField="emailaddress1" HeaderText="Email Address" />
+                            <asp:BoundField DataField="name" HeaderText="Investor Name" />
+                            <asp:BoundField DataField="emailaddress1" HeaderText="Email Address" />
                   
-                    </Columns>
-                </asp:GridView>
-                        <asp:TextBox ID="TextBoxNotes" runat="server" Height="58px" TextMode="MultiLine" Width="541px"></asp:TextBox>
-                        <div id="seperator" >
-                            <br />
-                            <br />
-            </div>
-                 <asp:GridView ID="GridViewDocumentDetails" runat="server" AutoGenerateColumns="False" DataKeyNames="DocumentName" OnSelectedIndexChanged="GridViewDocumentDetails_SelectedIndexChanged" Width="550px" CssClass="table table-striped">
-                    <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:CheckBox ID="SelectColumn" runat="server" Width="50px" />
-                            </ItemTemplate>
-                        </asp:TemplateField>                  
-                        <asp:BoundField DataField="DocumentName" HeaderText="Document Name" />
-                    </Columns>
-                </asp:GridView>
-
+                        </Columns>
+                    </asp:GridView>
+                </div>
+                <div id="documents" class="tab-pane fade">
+                     <asp:GridView ID="GridViewDocumentDetails" runat="server" AutoGenerateColumns="False" DataKeyNames="DocumentName" OnSelectedIndexChanged="GridViewDocumentDetails_SelectedIndexChanged" Width="550px" CssClass="table table-striped">
+                        <Columns>
+                            <asp:TemplateField>
+                                <ItemTemplate>
+                                    <asp:CheckBox ID="SelectColumn" runat="server" Width="50px" />
+                                </ItemTemplate>
+                            </asp:TemplateField>                  
+                            <asp:BoundField DataField="DocumentName" HeaderText="Document Name" />
+                        </Columns>
+                    </asp:GridView>
+                </div>
+                <div id="note" class="tab-pane fade">
+                    <asp:TextBox ID="TextBoxNotes" runat="server" Height="58px" TextMode="MultiLine" Width="541px"></asp:TextBox>
+                </div>
             </div>
             <div id="DocumentDetails">
             </div>
@@ -69,13 +75,13 @@
                 <asp:Label ID="LabelErrorMessage" runat="server" ForeColor="#FF3300"></asp:Label>
 
             </div>
-            <div id="ButtonPanel" "ms-crm-Dialog-Footer ms-crm-Dialog-Footer-Right">
+            <div id="ButtonPanel" class="pull-right">
                 <%--   onmouseout="Mscrm.ButtonUtils.hoverOff(this);" onmouseover="Mscrm.ButtonUtils.hoverOn(this);"  onmouseout="Mscrm.ButtonUtils.hoverOff(this);" onmouseover="Mscrm.ButtonUtils.hoverOn(this);" --%>
                 <table>
                     <tr>
-                        <td style="width: 411px">
-                            <asp:Button ID="butBegin" runat="server" class="ms-crm-Button"  Text="Ok" Width="100px" OnClick="butBegin_Click" CssClass="ms-crm-Button"/>
-                            &nbsp; &nbsp;&nbsp;<asp:Button ID="cmdDialogCancel" runat="server" class="ms-crm-Button" Text="Cancel" Width="100px" CssClass="ms-crm-Button"/>
+                        <td>
+                            <asp:Button ID="butBegin" runat="server" Text="Ok" Width="100px" OnClick="butBegin_Click" CssClass="btn btn-primary"/>
+                            <asp:Button ID="cmdDialogCancel" runat="server" Text="Cancel" Width="100px" CssClass="btn btn-default"/>
                         </td>
                         <td>
                             <%--           <asp:Button ID="butBegin" runat="server" class="ms-crm-Button" Text="Ok" Width="100px" OnClick="butBegin_Click"/>--%>
