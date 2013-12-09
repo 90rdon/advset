@@ -1058,22 +1058,22 @@ public class CrmApi
             // send emails
             if (Guid.Empty != NewEmailId)
             {
-                //SendEmailRequest MailRequest = new SendEmailRequest();
-                //MailRequest.EmailId = NewEmailId;
-                //MailRequest.IssueSend = true;
-                //MailRequest.TrackingToken = String.Empty;
-                //try
-                //{
-                //    SendEmailResponse SendResponse = (OrgServiceInstance.Execute(MailRequest) as SendEmailResponse);
-                //}
-                //catch (FaultException<OrganizationServiceFault> SendError)
-                //{
-                //    StringBuilder CreateMessage = new StringBuilder();
-                //    CreateMessage.AppendFormat(CultureInfo.CurrentCulture, "An Error occurred attempting to Send Email for Policy: {0} and Case: {1}. \r\n Details: {3}. "
-                //        + "The Email message was created but it has not been sent. Please reivew the Activities section of this record for further details.",
-                //                            policyNumber, clientName, SendError.ToString());
-                //    Logger.Write(String.Format(CultureInfo.CurrentCulture, "Error in CrmApi.CreateEmailActivity.Send: {0}", SendError.ToString()));
-                //}
+                SendEmailRequest MailRequest = new SendEmailRequest();
+                MailRequest.EmailId = NewEmailId;
+                MailRequest.IssueSend = true;
+                MailRequest.TrackingToken = String.Empty;
+                try
+                {
+                    SendEmailResponse SendResponse = (OrgServiceInstance.Execute(MailRequest) as SendEmailResponse);
+                }
+                catch (FaultException<OrganizationServiceFault> SendError)
+                {
+                    StringBuilder CreateMessage = new StringBuilder();
+                    CreateMessage.AppendFormat(CultureInfo.CurrentCulture, "An Error occurred attempting to Send Email for Policy: {0} and Case: {1}. \r\n Details: {3}. "
+                        + "The Email message was created but it has not been sent. Please reivew the Activities section of this record for further details.",
+                                            policyNumber, clientName, SendError.ToString());
+                    Logger.Write(String.Format(CultureInfo.CurrentCulture, "Error in CrmApi.CreateEmailActivity.Send: {0}", SendError.ToString()));
+                }
             }
         }
 
@@ -1099,10 +1099,10 @@ public class CrmApi
         var premiumFinanced = Convert.ToBoolean(policy[PolicyConstants.PremiumFinance]);
         var insuranceCompany = policy[PolicyConstants.InsuranceCompany].ToString();
         //var premium = policy[PolicyConstants.Premium];
-        // var twentyFirstFifty = policy[PolicyConstants.TwentyFirstFifty];
-        // var AVS = policy[PolicyConstants.AVS];
-        // var OtherLE = policy[PolicyConstants.OtherLE];
-        // var OwnerState = policy[PolicyConstants.OwnerState];
+        //var twentyFirstFifty = policy[PolicyConstants.TwentyFirstFifty];
+        //var AVS = policy[PolicyConstants.AVS];
+        //var OtherLE = policy[PolicyConstants.OtherLE];
+        //var OwnerState = policy[PolicyConstants.OwnerState];
 
         string contents = File.ReadAllText(path + @"/InvestorEmail.html");
 
@@ -1126,10 +1126,10 @@ public class CrmApi
         }
 
         contents = string.Format(
-            contents, caseId, AccountName, 
-            clientName, policyNumber, dbAmount, 
-            issueDate.ToShortDateString(), premiumFinanced ? "YES" : "NO", 
-            UrlList.ToString(), ConfigurationManager.AppSettings[ProjectConstants.PortalUriFull]
+            contents, caseId, AccountName,
+            clientName, policyNumber, dbAmount,
+            issueDate.ToShortDateString(), premiumFinanced ? "YES" : "NO",
+            "<ul>" + UrlList.ToString() + "</ul>", ConfigurationManager.AppSettings[ProjectConstants.PortalUriFull]
         );
 
         return contents;
