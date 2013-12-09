@@ -27,7 +27,6 @@ public partial class Review : System.Web.UI.Page
     public const String ModifiedDate = "modifiedon";
     public const Int32 LookbackConstant = 20;
     public const Int32 PageSizeConstant = 20;
-    public const String LastShippedDate = "new_lastshippeddate";
     #endregion
     #region private members
     private DataTable BuildTable()
@@ -41,7 +40,6 @@ public partial class Review : System.Web.UI.Page
         dt.Columns.Add(new DataColumn(D4Age, typeof(Int32)));
         dt.Columns.Add(new DataColumn(CreatedOn, typeof(DateTime)));
         dt.Columns.Add(new DataColumn(ModifiedDate, typeof(DateTime)));
-        dt.Columns.Add(new DataColumn(LastShippedDate, typeof(DateTime)));
         return dt;
     }
 
@@ -67,7 +65,7 @@ public partial class Review : System.Web.UI.Page
                     Int32 PageCt = Int32.Parse(Session["TempPageSize"].ToString());
                 }
                 DataView PolicyView = dt.DefaultView;
-                PolicyView.Sort = String.Format(CultureInfo.CurrentCulture,  "{0} DESC", LastShippedDate);
+                PolicyView.Sort = "createdon DESC";
                 GridViewPolicies.DataSource = PolicyView;
                 GridViewPolicies.DataBind();
             }
@@ -84,7 +82,7 @@ public partial class Review : System.Web.UI.Page
         {
             DataTable dt = (Session["dt"] as DataTable);
             DataView PolicyView = dt.DefaultView;
-            PolicyView.Sort = String.Format(CultureInfo.CurrentCulture, "{0} DESC", LastShippedDate);
+            PolicyView.Sort = "createdon DESC";
             GridViewPolicies.DataSource = PolicyView;
             GridViewPolicies.PageIndex = i;
             GridViewPolicies.DataBind();
@@ -132,10 +130,6 @@ public partial class Review : System.Web.UI.Page
                 if (policy.Attributes.Contains(ModifiedDate))
                 {
                     NewRow[ModifiedDate] = Convert.ToDateTime(policy[ModifiedDate]);
-                }
-                if (policy.Attributes.Contains(LastShippedDate))
-                {
-                    NewRow[LastShippedDate] = Convert.ToDateTime(policy[LastShippedDate]);
                 }
                 dt.Rows.Add(NewRow);
             }
@@ -227,7 +221,6 @@ public partial class Review : System.Web.UI.Page
             {
                 Id = ApiInstance.GetUserId(TextBoxUserName.Text, TextBoxPassword.Text);
                 Session["UserId"] = Id;
-                Session[ProjectConstants.UserGuid] = Id;
             }
             catch (Exception ex)
             {
@@ -261,7 +254,7 @@ public partial class Review : System.Web.UI.Page
                     DataTable dt = HydrateTable(PolicyDetails);
                     Session["dt"] = dt;
                     DataView PolicyView = dt.DefaultView;
-                    PolicyView.Sort = String.Format(CultureInfo.CurrentCulture, "{0} DESC", LastShippedDate);
+                    PolicyView.Sort = "createdon DESC";
                     Session["SortedView"] = PolicyView;
                     GridViewPolicies.DataSource = PolicyView;
                     GridViewPolicies.DataBind();
@@ -405,7 +398,7 @@ public partial class Review : System.Web.UI.Page
                 DataTable dt = HydrateTable(PolicyDetails);
                 Session["dt"] = dt;
                 DataView PolicyView = dt.DefaultView;
-                PolicyView.Sort = String.Format(CultureInfo.CurrentCulture, "{0} DESC", LastShippedDate);
+                PolicyView.Sort = "createdon DESC";
                 Session["SortedView"] = PolicyView;
                 GridViewPolicies.DataSource = PolicyView;
                 GridViewPolicies.DataBind();

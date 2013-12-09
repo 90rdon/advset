@@ -31,6 +31,21 @@ public static class PolicyConstants
             return "d4_client";
         }
     }
+    public static String ClientPolicyId
+    {
+        get
+        {
+            return "d4_clientpolicyid";
+        }
+    }
+    public static String ClientId
+    {
+        get
+        {
+            return "d4_clientid";
+        }
+    }
+
 
     /// <summary>
     /// Gets the DBAmount property - d4_dbamount.
@@ -82,6 +97,62 @@ public static class PolicyConstants
         get
         {
             return "d4_policynumber";
+        }
+    }
+    public static String DateofIssue
+    {
+        get
+        {
+            return "d4_dateofissue";
+        }
+    }
+    public static String PremiumFinance
+    {
+        get
+        {
+            return "d4_premiumfinance";
+        }
+    }
+    public static String InsuranceCompany
+    {
+        get
+        {
+            return "d4_insurancecompany";
+        }
+    }
+    public static String Premium
+    {
+        get
+        {
+            return "d4_premium";
+        }
+    }
+    public static String TwentyFirstFifty
+    {
+        get
+        {
+            return "new_21st_50";
+        }
+    }
+    public static String AVS
+    {
+        get
+        {
+            return "new_avs";
+        }
+    }
+    public static String OtherLE
+    {
+        get
+        {
+            return "new_other_le";
+        }
+    }
+    public static String OwnerState
+    {
+        get
+        {
+            return "new_owner_state";
         }
     }
     #endregion

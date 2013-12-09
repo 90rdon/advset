@@ -210,8 +210,14 @@ public partial class FileShipping : System.Web.UI.Page
     }
     protected void butBegin_Click(object sender, EventArgs e)
     {
+        CrmApi Instance = new CrmApi();
+        
+        String Library = String.Format(SharePointBaseUri, ViewState[ProjectConstants.DocumentId]);
+
+        List<String> LibraryLocation = new List<String>();
         List<Guid> Accounts = new List<Guid>();
 
+        // Get selected investor accounts
         foreach (GridViewRow currentRow in GridViewInvestors.Rows)
         {
             CheckBox selected = (CheckBox)currentRow.FindControl(ProjectConstants.SelectColumn);
@@ -221,9 +227,8 @@ public partial class FileShipping : System.Web.UI.Page
                 Accounts.Add(Acctid);
             }
         }
-        CrmApi Instance = new CrmApi();
-        List<String> LibraryLocation = new List<String>();
-        String Library = String.Format(SharePointBaseUri, ViewState[ProjectConstants.DocumentId]);
+
+        //Get selected documents
         LibraryLocation.Add(Library);
         foreach (GridViewRow currentDocRow in GridViewDocumentDetails.Rows)
         {
@@ -234,82 +239,87 @@ public partial class FileShipping : System.Web.UI.Page
                 LibraryLocation.Add(DocName);
             }
         }
-        Guid FromId;
-        if (Guid.TryParse(ConfigurationManager.AppSettings[ProjectConstants.FromUserId].ToString(), out FromId))
-        {
-          //  Instance.CreateEmailActivity(FromId, Accounts, LibraryLocation, new Guid(ViewState[ProjectConstants.QueryStringId].ToString()), null, null);
-        }
-        String PolicyNumber = null;
-        try
-        {
-            PolicyNumber = Instance.GetPolicyNumberFromId(new Guid(ViewState[ProjectConstants.QueryStringId].ToString()));
-        }
-        catch (Exception)
-        {
-            LabelErrorMessage.Text = "Policy # could not be retrieved.";
-            LabelErrorMessage.Visible = true;
-            return;
-        }
-        EntityCollection Clients = null;
-        if (!String.IsNullOrWhiteSpace(PolicyNumber))
-        {
-            try
-            {
-                Clients = Instance.GetClientFromPolicyNumber(PolicyNumber);
-            }
-            catch (Exception)
-            {
-                LabelErrorMessage.Text = "Client Information could not be retrieved.";
-                LabelErrorMessage.Visible = true;
-                return;
-            }
-        }
-        String SubjectName = null;
-        if (null != Clients && Clients.Entities.Count > 0)
-        {
-            if (Clients[0].Attributes.Contains(PolicyConstants.ClientName))
-            {
-                SubjectName = Clients[0][PolicyConstants.ClientName].ToString();
-            }
-            else
-            {
-                SubjectName = ProjectConstants.NotFound;
-            }
+
+        //Guid FromId = Guid.Parse(ConfigurationManager.AppSettings[ProjectConstants.FromUserId]);
+        ////if (Guid.TryParse(ConfigurationManager.AppSettings[ProjectConstants.FromUserId].ToString(), out FromId))
+        ////{
+        ////  //  Instance.CreateEmailActivity(FromId, Accounts, LibraryLocation, new Guid(ViewState[ProjectConstants.QueryStringId].ToString()), null, null);
+        ////}
+
+        //String PolicyNumber = null;
+        //try
+        //{
+        //    PolicyNumber = Instance.GetPolicyNumberFromId(new Guid(ViewState[ProjectConstants.QueryStringId].ToString()));
+        //}
+        //catch (Exception)
+        //{
+        //    LabelErrorMessage.Text = "Policy # could not be retrieved.";
+        //    LabelErrorMessage.Visible = true;
+        //    return;
+        //}
+        //EntityCollection Clients = null;
+        //if (!String.IsNullOrWhiteSpace(PolicyNumber))
+        //{
+        //    try
+        //    {
+        //        Clients = Instance.GetClientsFromPolicyNumber(PolicyNumber);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        LabelErrorMessage.Text = "Client Information could not be retrieved.";
+        //        LabelErrorMessage.Visible = true;
+        //        return;
+        //    }
+        //}
+        //String SubjectName = null;
+        //if (null != Clients && Clients.Entities.Count > 0)
+        //{
+        //    if (Clients[0].Attributes.Contains(PolicyConstants.ClientName))
+        //    {
+        //        SubjectName = Clients[0][PolicyConstants.ClientName].ToString();
+        //    }
+        //    else
+        //    {
+        //        SubjectName = ProjectConstants.NotFound;
+        //    }
 
 
-        }
-        else
-        {
-            SubjectName = ProjectConstants.NotFound;
-        }
-        String DBAmount = null;
-        try
-        {
-            DBAmount = Instance.GetPolicyAmountFromId(new Guid(ViewState[ProjectConstants.QueryStringId].ToString()));
-        }
-        catch (Exception)
-        {
-            LabelErrorMessage.Text = "An error occured and processing did not complete, please try again.";
-            LabelErrorMessage.Visible = true;
-        }
-        if (!String.IsNullOrWhiteSpace(DBAmount))
-        {
-            SubjectName = String.Format(CultureInfo.CurrentCulture, "{0} - {1}", SubjectName, DBAmount);
-        }
-        try
-        {
-            Instance.CreateEmailActivity(FromId, Accounts, LibraryLocation, new Guid(ViewState[ProjectConstants.QueryStringId].ToString()), SubjectName, PolicyNumber, TextBoxNotes.Text);
-            Instance.LogActivity(Accounts, LibraryLocation, PolicyNumber);
-            Instance.CreateInvestor(Accounts, new Guid(ViewState[ProjectConstants.QueryStringId].ToString()));
-            ClientScript.RegisterClientScriptBlock(this.GetType(), "validation", "alert('File successfully shipped');", true);
-        }
-        catch (Exception)
-        {
-            LabelErrorMessage.Text = "An error occured and processing did not complete, please try again.";
-            LabelErrorMessage.Visible = true;
-            ClientScript.RegisterClientScriptBlock(this.GetType(), "validation", "alert('An error occurred, processing did not complete. Please try again.');", true);
-        }
-       
+        //}
+        //else
+        //{
+        //    SubjectName = ProjectConstants.NotFound;
+        //}
+        //String DBAmount = null;
+        //try
+        //{
+        //    DBAmount = Instance.GetPolicyAmountFromId(new Guid(ViewState[ProjectConstants.QueryStringId].ToString()));
+        //}
+        //catch (Exception)
+        //{
+        //    LabelErrorMessage.Text = "An error occured and processing did not complete, please try again.";
+        //    LabelErrorMessage.Visible = true;
+        //}
+        //if (!String.IsNullOrWhiteSpace(DBAmount))
+        //{
+        //    SubjectName = String.Format(CultureInfo.CurrentCulture, "{0} - {1}", SubjectName, DBAmount);
+        //}
+        //try
+        //{
+        //    Instance.CreateEmailActivity(FromId, Accounts, LibraryLocation, new Guid(ViewState[ProjectConstants.QueryStringId].ToString()), SubjectName, PolicyNumber, TextBoxNotes.Text);
+        //    Instance.LogActivity(Accounts, LibraryLocation, PolicyNumber);
+        //    Instance.CreateInvestor(Accounts, new Guid(ViewState[ProjectConstants.QueryStringId].ToString()));
+        //    ClientScript.RegisterClientScriptBlock(this.GetType(), "validation", "alert('File successfully shipped');", true);
+        //}
+        //catch (Exception)
+        //{
+        //    LabelErrorMessage.Text = "An error occured and processing did not complete, please try again.";
+        //    LabelErrorMessage.Visible = true;
+        //    ClientScript.RegisterClientScriptBlock(this.GetType(), "validation", "alert('An error occurred, processing did not complete. Please try again.');", true);
+        //}
+
+        string path = Request.PhysicalApplicationPath;
+        string errMessage = null;
+        Instance.GenerateInvestorEmails(path, Accounts, LibraryLocation, new Guid(ViewState[ProjectConstants.QueryStringId].ToString()), TextBoxNotes.Text, out errMessage);
     }
     protected void GridViewInvestors_RowCreated(object sender, GridViewRowEventArgs e)
     {

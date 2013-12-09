@@ -82,11 +82,6 @@ public class CrmApi
     ///"Lookback"
     ///</summary>
     public const String Lookback = "Lookback";
-
-    /// <summary>
-    /// new_lastshippeddate
-    /// </summary>
-    public const String LastShippedDate = "new_lastshippeddate";
     #endregion
     #region methods
     public EntityCollection GetAuditBy(String investorName)
@@ -122,14 +117,14 @@ public class CrmApi
             EntityCollection AllPolicies = null;
             ConditionExpression Policies = new ConditionExpression(D4PolicyId, ConditionOperator.Equal, id);
             DateTime LookbackPeriod = DateTime.Now.AddDays((Convert.ToDouble(lookBackDays * -1)));
-            ConditionExpression ModifiedCondition = new ConditionExpression(LastShippedDate, ConditionOperator.GreaterThan, LookbackPeriod);
+            ConditionExpression ModifiedCondition = new ConditionExpression(ModifiedOnDate, ConditionOperator.GreaterThan, LookbackPeriod);
 
             FilterExpression PolicyFilter = new FilterExpression();
             PolicyFilter.AddCondition(Policies);
             PolicyFilter.AddCondition(ModifiedCondition);
             OrderExpression SortFilter = new OrderExpression();
-            SortFilter.AttributeName = LastShippedDate;
-            SortFilter.OrderType = OrderType.Descending;
+            SortFilter.AttributeName = ModifiedOnDate;
+            SortFilter.OrderType = OrderType.Ascending;
             QueryExpression PolicyDetails = new QueryExpression(D4Policy)
             {
                 ColumnSet = new ColumnSet(true),

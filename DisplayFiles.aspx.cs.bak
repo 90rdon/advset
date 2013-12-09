@@ -69,10 +69,6 @@ public partial class DisplayFiles : System.Web.UI.Page
         }
         if (!Page.IsPostBack)
         {
-            if (Request.UrlReferrer != null && Request.UrlReferrer.AbsoluteUri != null)
-            {
-                hlReturnToPolicies.NavigateUrl = Request.UrlReferrer.AbsoluteUri;
-            }
             CrmApi Instance = new CrmApi();
             String userName = Session[ProjectConstants.UserName].ToString();
            // String AcctName = Instance.GetAccountNameFromId(userName);
@@ -110,13 +106,8 @@ public partial class DisplayFiles : System.Web.UI.Page
                 }
                 if (DocumentTable.Rows.Count > 0)
                 {
-                    SetLinkLabelVisibility(true);
                     GridViewDocumentDetails.DataSource = DocumentTable;
                     GridViewDocumentDetails.DataBind();
-                }
-                else
-                {
-                    SetLinkLabelVisibility(false);
                 }
             }
             catch (Exception ex)
@@ -126,13 +117,6 @@ public partial class DisplayFiles : System.Web.UI.Page
                 Logger.Write(String.Format(CultureInfo.CurrentCulture, "Error in DisplayFiles OnLoad: {0}", ex.ToString()));
             }
         }
-    }
-
-    private void SetLinkLabelVisibility(Boolean visible)
-    {
-        lbDownloadSelected.Visible = visible;
-        lbClearAll.Visible = visible;
-        lbSelectAll.Visible = visible;
     }
     protected void GridViewDocumentDetails_SelectedIndexChanged(object sender, EventArgs e)
     {

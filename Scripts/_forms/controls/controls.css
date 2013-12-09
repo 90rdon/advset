@@ -26,9 +26,6 @@ DIV.ms-crm-RadioButton
 behavior: url(/_static/_forms/controls/input.radio.htc?ver=-339091135) ;
 }
 
-th {
-background-color: red;
-}
 
 INPUT.ms-crm-Email-Address
 {
