@@ -1099,10 +1099,10 @@ public class CrmApi
         var premiumFinanced = Convert.ToBoolean(policy[PolicyConstants.PremiumFinance]);
         var insuranceCompany = policy[PolicyConstants.InsuranceCompany].ToString();
         //var premium = policy[PolicyConstants.Premium];
-        var twentyFirstFifty = policy[PolicyConstants.TwentyFirstFifty];
-        var AVS = policy[PolicyConstants.AVS];
-        var OtherLE = policy[PolicyConstants.OtherLE];
-        var OwnerState = policy[PolicyConstants.OwnerState];
+        // var twentyFirstFifty = policy[PolicyConstants.TwentyFirstFifty];
+        // var AVS = policy[PolicyConstants.AVS];
+        // var OtherLE = policy[PolicyConstants.OtherLE];
+        // var OwnerState = policy[PolicyConstants.OwnerState];
 
         string contents = File.ReadAllText(path + @"/InvestorEmail.html");
 
