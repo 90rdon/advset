@@ -20,9 +20,22 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css" />
     <style type="text/css">
         .auto-style1 {
-            height: 10px;
+            width: 160px;
+        }
+
+        #Spacer {
+            height: 44px;
+        }
+
+        #Greeting {
+            height: 34px;
+        }
+
+        .header {
+            padding-top:5px;
         }
     </style>
+
 </head>
 <body>
      <div class="container">

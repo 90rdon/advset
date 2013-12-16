@@ -150,7 +150,7 @@ public partial class Review : System.Web.UI.Page
     public string GetUrl(Object policyId)
     {
 
-        string url = String.Format(CultureInfo.CurrentCulture, ConfigurationManager.AppSettings[ProjectConstants.ShipPageUri], policyId);
+        String url = String.Format(CultureInfo.CurrentCulture, ConfigurationManager.AppSettings[ProjectConstants.ShipPageUri], policyId);
         return url;
     }
     #region page events
@@ -186,7 +186,7 @@ public partial class Review : System.Web.UI.Page
         {
             Int32 TempLookback;
             Int32 TempPageSize;
-            if (Int32.TryParse(tbLookbackPeriod.Text, out TempLookback))
+            if (Int32.TryParse(Request["tbLookbackPeriod"], out TempLookback))
             {
                 LookbackPeriod = TempLookback;
                 Session["LookbackPeriod"] = LookbackPeriod;
@@ -265,12 +265,6 @@ public partial class Review : System.Web.UI.Page
                     Session["SortedView"] = PolicyView;
                     GridViewPolicies.DataSource = PolicyView;
                     GridViewPolicies.DataBind();
-                    if (GridViewPolicies.Rows.Count > 0)
-                    {
-                        GridViewPolicies.UseAccessibleHeader = true;
-
-                        GridViewPolicies.HeaderRow.TableSection = TableRowSection.TableHeader;
-                    }
                     ViewState["Direction"] = "Descending";
                 }
                 else
@@ -382,7 +376,7 @@ public partial class Review : System.Web.UI.Page
             try
             {
                 Int32 Temp;
-                if (Int32.TryParse(tbLookbackPeriod.Text, out Temp))
+                if (Int32.TryParse(Request["tbLookbackPeriod"], out Temp))
                 {
                     PolicyDetails = ApiInstance.GetRelatedPolicies(Id, Temp);
                 }

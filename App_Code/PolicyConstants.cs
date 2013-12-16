@@ -45,6 +45,27 @@ public static class PolicyConstants
             return "d4_clientid";
         }
     }
+    public static String ClientDOB
+    {
+        get
+        {
+            return "d4_dob";
+        }
+    }
+    public static String ClientGender
+    {
+        get
+        {
+            return "d4_gender";
+        }
+    }
+    public static String ClientAge
+    {
+        get
+        {
+            return "d4_age";
+        }
+    }
 
 
     /// <summary>
@@ -153,6 +174,67 @@ public static class PolicyConstants
         get
         {
             return "new_owner_state";
+        }
+    }
+    public static Dictionary<int, string> States
+    {
+        get
+        {
+            Dictionary<int, string> states = new Dictionary<int, string>
+            {
+                {100000001, "Alabama"},
+                {100000000, "Alaska"},
+                {100000002, "Arizona"},
+                {100000003, "Arkansas"},
+                {100000004, "California"},
+                {100000005, "Colorado"},
+                {100000006, "Connecticut"},
+                {100000007, "Delaware"},
+                {100000008, "Florida"},
+                {100000009, "Georgia"},
+                {100000010, "Hawaii"},
+                {100000011, "Idaho"},
+                {100000012, "Illinois"},
+                {100000013, "Indiana"},
+                {100000014, "Iowa"},
+                {100000015, "Kansas"},
+                {100000016, "Kentucky"},
+                {100000017, "Louisiana"},
+                {100000018, "Maine"},
+                {100000019, "Maryland"},
+                {100000020, "Massachusetts"},
+                {100000021, "Michigan"},
+                {100000022, "Minnesota"},
+                {100000023, "Mississippi"},
+                {100000024, "Missouris"},
+                {100000025, "Montana"},
+                {100000026, "Nebraska"},
+                {100000027, "Nevada"},
+                {100000028, "New Hampshire"},
+                {100000029, "New Jersey"},
+                {100000030, "New Mexico"},
+                {100000031, "New York"},
+                {100000032, "North Carolina"},
+                {100000033, "North Dakota"},
+                {100000034, "Ohio"},
+                {100000035, "Oklahoma"},
+                {100000036, "Oregon"},
+                {100000037, "Pennsylvania"},
+                {100000039, "South Carolina"},
+                {100000040, "South Dakota"},
+                {100000041, "Tennessee"},
+                {100000042, "Texas"},
+                {100000043, "Utah"},
+                {100000044, "Vermont"},
+                {100000045, "Virginia"},
+                {100000046, "Washington"},
+                {100000047, "West Virginia"},
+                {100000048, "Wisconsin"},
+                {100000049, "Wyoming"},
+                
+            };
+
+            return states;
         }
     }
     #endregion

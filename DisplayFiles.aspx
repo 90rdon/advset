@@ -31,6 +31,9 @@
         .auto-style3 {
             height: 15px;
         }
+        .header {
+            padding-top: 5px;
+        }
     </style>
 </head>
 <body>

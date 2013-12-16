@@ -827,6 +827,7 @@ public class CrmApi
             id, 
             keyFieldName, 
             selectColumns, 
+            null,
             null, 
             null, 
             null, 
@@ -839,7 +840,8 @@ public class CrmApi
         string keyFieldName, 
         string[] selectedColumns, 
         string include, 
-        string keyFieldNameForInclude, 
+        string keyFieldNameFrom,
+        string keyFieldNameTo, 
         string[] selectedColumnsForInclude,
         JoinOperator join)
     {
@@ -854,9 +856,9 @@ public class CrmApi
             // build a link relationship with the parent and child entity
             LinkEntity includeLink = new LinkEntity();
             includeLink.LinkFromEntityName = entityName;
-            includeLink.LinkFromEntityName = include;
-            includeLink.LinkFromAttributeName = keyFieldName;
-            includeLink.LinkToAttributeName = keyFieldNameForInclude;
+            includeLink.LinkToEntityName = include;
+            includeLink.LinkFromAttributeName = keyFieldNameFrom;
+            includeLink.LinkToAttributeName = keyFieldNameTo;
 
             NameQuery.LinkEntities.Add(includeLink);
         }
@@ -940,6 +942,9 @@ public class CrmApi
         Fetch.Append(" <entity name=\"d4_client\">");
         Fetch.Append("   <attribute name=\"d4_clientid\" />");
         Fetch.Append("   <attribute name=\"d4_clientname\" />");
+        Fetch.Append("   <attribute name=\"d4_dob\" />");
+        Fetch.Append("   <attribute name=\"d4_gender\" />");
+        Fetch.Append("   <attribute name=\"d4_age\" />");
         Fetch.Append("  <attribute name=\"createdon\" />");
         Fetch.Append("  <order attribute=\"d4_clientname\" descending=\"false\" />");
         Fetch.Append(" <link-entity name=\"d4_policy\" from=\"d4_clientpolicyid\" to=\"d4_clientid\" alias=\"ab\">");
@@ -988,6 +993,9 @@ public class CrmApi
         var clients = GetClientsFromPolicyNumber(policyNumber);
         // case number
         string clientName = null;
+        string gender = null;
+        string age = null;
+        string dob = null;
         if (clients != null &&
             clients.Entities.Count > 0)
         {
@@ -998,6 +1006,37 @@ public class CrmApi
             else
             {
                 clientName = ProjectConstants.NotFound;
+            }
+            if (clients[0].Attributes.Contains(PolicyConstants.ClientGender))
+            {
+                string tmpGender = ((OptionSetValue)clients[0][PolicyConstants.ClientGender]).Value.ToString();
+
+                if (tmpGender == "100000000")
+                    gender = "Male";
+                else if (tmpGender == "100000001")
+                    gender = "Female";
+                else
+                    gender = "Unknown";
+            }
+            else
+            {
+                gender = ProjectConstants.NotFound;
+            }
+            if (clients[0].Attributes.Contains(PolicyConstants.ClientDOB))
+            {
+                dob = ((DateTime)clients[0][PolicyConstants.ClientDOB]).ToShortDateString();
+            }
+            else
+            {
+                dob = ProjectConstants.NotFound;
+            }
+            if (clients[0].Attributes.Contains(PolicyConstants.ClientAge))
+            {
+                age = clients[0][PolicyConstants.ClientAge].ToString();
+            }
+            else
+            {
+                age = ProjectConstants.NotFound;
             }
         }
         else
@@ -1039,7 +1078,20 @@ public class CrmApi
             newEmail[EmailConstants.From] = FromGroup;
             newEmail[EmailConstants.To] = ToGroup;
             newEmail[EmailConstants.Subject] = caseId;
-            string body = BuildInvestorEmailBody(path, queryId, account, selectedDocuments, policyNumber, caseId, clientName, dbAmount, textNote);
+            string body = BuildInvestorEmailBody(
+                path, 
+                queryId, 
+                account, 
+                selectedDocuments, 
+                policyNumber, 
+                caseId, 
+                clientName, 
+                dbAmount, 
+                textNote,
+                gender,
+                dob,
+                age
+            );
             newEmail[EmailConstants.Description] = body;
             newEmail[EmailConstants.RegardingObjectId] = RegardingObjectId;
             // create email entity
@@ -1058,29 +1110,41 @@ public class CrmApi
             // send emails
             if (Guid.Empty != NewEmailId)
             {
-                SendEmailRequest MailRequest = new SendEmailRequest();
-                MailRequest.EmailId = NewEmailId;
-                MailRequest.IssueSend = true;
-                MailRequest.TrackingToken = String.Empty;
-                try
-                {
-                    SendEmailResponse SendResponse = (OrgServiceInstance.Execute(MailRequest) as SendEmailResponse);
-                }
-                catch (FaultException<OrganizationServiceFault> SendError)
-                {
-                    StringBuilder CreateMessage = new StringBuilder();
-                    CreateMessage.AppendFormat(CultureInfo.CurrentCulture, "An Error occurred attempting to Send Email for Policy: {0} and Case: {1}. \r\n Details: {3}. "
-                        + "The Email message was created but it has not been sent. Please reivew the Activities section of this record for further details.",
-                                            policyNumber, clientName, SendError.ToString());
-                    Logger.Write(String.Format(CultureInfo.CurrentCulture, "Error in CrmApi.CreateEmailActivity.Send: {0}", SendError.ToString()));
-                }
+                //SendEmailRequest MailRequest = new SendEmailRequest();
+                //MailRequest.EmailId = NewEmailId;
+                //MailRequest.IssueSend = true;
+                //MailRequest.TrackingToken = String.Empty;
+                //try
+                //{
+                //    SendEmailResponse SendResponse = (OrgServiceInstance.Execute(MailRequest) as SendEmailResponse);
+                //}
+                //catch (FaultException<OrganizationServiceFault> SendError)
+                //{
+                //    StringBuilder CreateMessage = new StringBuilder();
+                //    CreateMessage.AppendFormat(CultureInfo.CurrentCulture, "An Error occurred attempting to Send Email for Policy: {0} and Case: {1}. \r\n Details: {3}. "
+                //        + "The Email message was created but it has not been sent. Please reivew the Activities section of this record for further details.",
+                //                            policyNumber, clientName, SendError.ToString());
+                //    Logger.Write(String.Format(CultureInfo.CurrentCulture, "Error in CrmApi.CreateEmailActivity.Send: {0}", SendError.ToString()));
+                //}
             }
         }
 
         errMessage = null;
     }
 
-    private string BuildInvestorEmailBody(string path, Guid queryId, Guid accountId, List<String> sharePointLinks, String policyNumber, string caseId, String clientName, string dbAmount, String textNote)
+    private string BuildInvestorEmailBody(
+        string path,
+        Guid queryId,
+        Guid accountId, 
+        List<String> sharePointLinks, 
+        String policyNumber, 
+        string caseId, 
+        String clientName, 
+        string dbAmount, 
+        String textNote,
+        string gender,
+        string dob,
+        string age)
     {
         string[] policyColumns = new string[] { 
             PolicyConstants.DateofIssue,
@@ -1093,17 +1157,42 @@ public class CrmApi
             PolicyConstants.OwnerState
         };
 
-        Entity policy = GetFieldFromId(PolicyConstants.PolicyEntityName, queryId, PolicyConstants.PolicyId, policyColumns);
+        string[] clientColumns = new string[] {
+            PolicyConstants.ClientAge,
+            PolicyConstants.ClientDOB,
+            PolicyConstants.ClientGender
+        };
 
-        var issueDate = Convert.ToDateTime(policy[PolicyConstants.DateofIssue]);
-        var premiumFinanced = Convert.ToBoolean(policy[PolicyConstants.PremiumFinance]);
-        var insuranceCompany = policy[PolicyConstants.InsuranceCompany].ToString();
-        //var premium = policy[PolicyConstants.Premium];
-        //var twentyFirstFifty = policy[PolicyConstants.TwentyFirstFifty];
-        //var AVS = policy[PolicyConstants.AVS];
-        //var OtherLE = policy[PolicyConstants.OtherLE];
-        //var OwnerState = policy[PolicyConstants.OwnerState];
+        //Entity policy = GetFieldFromIdWithInclude(
+        //    PolicyConstants.PolicyEntityName,
+        //    queryId,
+        //    PolicyConstants.PolicyId,
+        //    policyColumns,
+        //    PolicyConstants.ClientEntityName,
+        //    PolicyConstants.ClientPolicyId,
+        //    PolicyConstants.ClientId,
+        //    clientColumns,
+        //    JoinOperator.Inner
+        //);
+        Entity policy = GetFieldFromId(
+            PolicyConstants.PolicyEntityName,
+            queryId,
+            PolicyConstants.PolicyId,
+            policyColumns
+        );
 
+
+        var issueDate = policy.Contains(PolicyConstants.DateofIssue) ? Convert.ToDateTime(policy[PolicyConstants.DateofIssue]) : DateTime.MinValue;
+        var premiumFinanced = policy.Contains(PolicyConstants.PremiumFinance) ? Convert.ToBoolean(policy[PolicyConstants.PremiumFinance]) : false;
+        var insuranceCompany = policy.Contains(PolicyConstants.InsuranceCompany) ? ((EntityReference)policy[PolicyConstants.InsuranceCompany]).Name : null;
+        var premium = policy.Contains(PolicyConstants.Premium) ? String.Format(CultureInfo.CurrentCulture, "{0:C}"
+                , ((Money)policy[PolicyConstants.Premium]).Value) : ProjectConstants.NotFound;
+        var twentyFirstFifty = policy.Contains(PolicyConstants.TwentyFirstFifty) ? policy[PolicyConstants.TwentyFirstFifty] : ProjectConstants.NotFound;
+        var AVS = policy.Contains(PolicyConstants.AVS) ? policy[PolicyConstants.AVS] : ProjectConstants.NotFound;
+        var OtherLE = policy.Contains(PolicyConstants.OtherLE) ? policy[PolicyConstants.OtherLE] : ProjectConstants.NotFound;
+        var OwnerState = policy.Contains(PolicyConstants.OwnerState) ? PolicyConstants.States
+            .SingleOrDefault(k => k.Key == ((OptionSetValue)policy[PolicyConstants.OwnerState]).Value)
+            .Value : ProjectConstants.NotFound;
         string contents = File.ReadAllText(path + @"/InvestorEmail.html");
 
 
@@ -1127,8 +1216,11 @@ public class CrmApi
 
         contents = string.Format(
             contents, caseId, AccountName,
-            clientName, policyNumber, dbAmount,
+            clientName, gender, dob,
+            age, policyNumber, dbAmount,
             issueDate.ToShortDateString(), premiumFinanced ? "YES" : "NO",
+            insuranceCompany, premium, twentyFirstFifty, AVS, 
+            OtherLE, OwnerState, 
             "<ul>" + UrlList.ToString() + "</ul>", ConfigurationManager.AppSettings[ProjectConstants.PortalUriFull]
         );
 
